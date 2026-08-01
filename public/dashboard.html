@@ -1,6 +1,8 @@
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LP Jeans — Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -9,26 +11,34 @@
 <body>
 <div class="app">
   <div id="sidebar-container"></div>
-  <main class="conteudo">
-    <div class="topo-pagina"><div><h1>Dashboard</h1><p>Visão geral da loja</p></div></div>
-    <div class="grade-indicadores" id="indicadores"></div>
-    <div class="card">
-      <h2>Produtos com estoque baixo</h2>
-      <table>
-        <thead><tr><th>Produto</th><th>Tamanho</th><th>Cor</th><th>Estoque atual</th><th>Mínimo</th></tr></thead>
-        <tbody id="tabelaEstoqueBaixo"><tr><td colspan="5">Carregando...</td></tr></tbody>
-      </table>
-    </div>
-    <div class="card">
-      <h2>Últimas vendas</h2>
-      <div class="em-construcao" style="padding: 20px;">
-        <p>O módulo de Vendas ainda está em construção. Assim que estiver pronto, as últimas vendas aparecerão aqui automaticamente.</p>
+  <div class="coluna-principal">
+    <div id="topbar-container"></div>
+    <main class="conteudo">
+      <div class="grade-indicadores" id="indicadores"></div>
+
+      <div class="card">
+        <h2>Produtos com estoque baixo</h2>
+        <div class="wrapper-tabela">
+          <table>
+            <thead><tr><th>Produto</th><th>Tamanho</th><th>Cor</th><th>Estoque atual</th><th>Mínimo</th></tr></thead>
+            <tbody id="tabelaEstoqueBaixo"><tr><td colspan="5">Carregando...</td></tr></tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  </main>
+
+      <div class="card">
+        <h2>Últimas vendas</h2>
+        <div class="em-construcao">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          <p>O módulo de Vendas ainda está em construção. Assim que estiver pronto, as últimas vendas aparecerão aqui automaticamente.</p>
+        </div>
+      </div>
+    </main>
+  </div>
 </div>
 <script src="js/api.js"></script>
 <script src="js/sidebar.js"></script>
+<script src="js/topbar.js"></script>
 <script src="js/dashboard.js"></script>
 </body>
 </html>

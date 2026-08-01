@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LP Jeans — Em construção</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -10,27 +11,35 @@
 <body>
 <div class="app">
   <div id="sidebar-container"></div>
-  <main class="conteudo">
-    <div class="topo-pagina"><div><h1 id="tituloModulo">Módulo</h1><p>Ainda em construção</p></div></div>
-    <div class="card">
-      <div class="em-construcao">
-        <div class="icone-grande">🛠️</div>
-        <p>Este módulo ainda está sendo desenvolvido.</p>
-        <p>Assim que estiver pronto, ele aparecerá aqui automaticamente.</p>
+  <div class="coluna-principal">
+    <div id="topbar-container"></div>
+    <main class="conteudo">
+      <div class="card">
+        <div class="em-construcao">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14.7 6.3a4 4 0 1 1-5.4 5.4l-6 6a1.5 1.5 0 0 0 2.1 2.1l6-6"/><path d="M14.7 6.3l3 3M17.7 3.3l3 3-3 3-3-3z"/></svg>
+          <p>Este módulo ainda está sendo desenvolvido.</p>
+          <p>Assim que estiver pronto, ele aparecerá aqui automaticamente.</p>
+        </div>
       </div>
-    </div>
-  </main>
+    </main>
+  </div>
 </div>
 <script src="js/api.js"></script>
 <script src="js/sidebar.js"></script>
+<script src="js/topbar.js"></script>
 <script>
   exigirLogin();
   const parametros = new URLSearchParams(window.location.search);
   const nomeModulo = parametros.get('modulo') || 'Módulo';
-  document.getElementById('tituloModulo').textContent = nomeModulo;
   document.title = `LP Jeans — ${nomeModulo}`;
-  const mapaIds = { 'Vendas': 'vendas', 'Compras': 'compras', 'Estoque': 'estoque', 'Clientes': 'clientes', 'Fornecedores': 'fornecedores', 'Caixa': 'caixa', 'Relatórios': 'relatorios', 'Usuários': 'usuarios', 'Configurações': 'configuracoes' };
+
+  const mapaIds = {
+    'Vendas': 'vendas', 'Compras': 'compras', 'Estoque': 'estoque',
+    'Clientes': 'clientes', 'Fornecedores': 'fornecedores', 'Caixa': 'caixa',
+    'Relatórios': 'relatorios', 'Usuários': 'usuarios', 'Configurações': 'configuracoes',
+  };
   montarSidebar(mapaIds[nomeModulo] || '');
+  montarTopbar(nomeModulo);
 </script>
 </body>
 </html>

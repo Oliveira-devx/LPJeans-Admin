@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>LP Jeans — Produtos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -10,42 +11,49 @@
 <body>
 <div class="app">
   <div id="sidebar-container"></div>
-  <main class="conteudo">
-    <div class="topo-pagina"><div><h1>Produtos</h1><p>Cadastro de produtos, tipos e variações</p></div></div>
-    <div class="card">
-      <h2>Novo tipo de produto</h2>
-      <form id="formTipo">
-        <div class="campo"><label for="nomeTipo">Nome (ex: Calça, Blusa, Vestido)</label><input type="text" id="nomeTipo" required></div>
-        <button type="submit" class="primario">Adicionar tipo</button>
-      </form>
-      <div id="msgTipo" class="msg"></div>
-    </div>
-    <div class="card">
-      <h2>Novo produto</h2>
-      <form id="formProduto">
-        <div class="campo"><label for="referencia">Referência</label><input type="text" id="referencia" required></div>
-        <div class="campo"><label for="descricao">Descrição</label><input type="text" id="descricao" required></div>
-        <div class="campo"><label for="idTipo">Tipo</label><select id="idTipo"></select></div>
-        <div class="campo"><label for="genero">Gênero</label>
-          <select id="genero"><option value="">—</option><option value="Feminino">Feminino</option><option value="Masculino">Masculino</option><option value="Unissex">Unissex</option></select>
+  <div class="coluna-principal">
+    <div id="topbar-container"></div>
+    <main class="conteudo">
+      <div class="card">
+        <h2>Novo tipo de produto</h2>
+        <form id="formTipo">
+          <div class="campo"><label for="nomeTipo">Nome (ex: Calça, Blusa, Vestido)</label><input type="text" id="nomeTipo" required></div>
+          <button type="submit" class="primario">Adicionar tipo</button>
+        </form>
+        <div id="msgTipo" class="msg"></div>
+      </div>
+
+      <div class="card">
+        <h2>Novo produto</h2>
+        <form id="formProduto">
+          <div class="campo"><label for="referencia">Referência</label><input type="text" id="referencia" required></div>
+          <div class="campo"><label for="descricao">Descrição</label><input type="text" id="descricao" required></div>
+          <div class="campo"><label for="idTipo">Tipo</label><select id="idTipo"></select></div>
+          <div class="campo"><label for="genero">Gênero</label>
+            <select id="genero"><option value="">—</option><option value="Feminino">Feminino</option><option value="Masculino">Masculino</option><option value="Unissex">Unissex</option></select>
+          </div>
+          <div class="campo"><label for="tecido">Tecido</label><input type="text" id="tecido"></div>
+          <div class="campo"><label for="colecao">Coleção</label><input type="text" id="colecao"></div>
+          <button type="submit" class="primario">Cadastrar produto</button>
+        </form>
+        <div id="msgProduto" class="msg"></div>
+      </div>
+
+      <div class="card">
+        <h2>Produtos cadastrados</h2>
+        <div class="wrapper-tabela">
+          <table>
+            <thead><tr><th>Referência</th><th>Descrição</th><th>Tipo</th><th>Gênero</th><th></th></tr></thead>
+            <tbody id="tabelaProdutos"></tbody>
+          </table>
         </div>
-        <div class="campo"><label for="tecido">Tecido</label><input type="text" id="tecido"></div>
-        <div class="campo"><label for="colecao">Coleção</label><input type="text" id="colecao"></div>
-        <button type="submit" class="primario">Cadastrar produto</button>
-      </form>
-      <div id="msgProduto" class="msg"></div>
-    </div>
-    <div class="card">
-      <h2>Produtos cadastrados</h2>
-      <table>
-        <thead><tr><th>Referência</th><th>Descrição</th><th>Tipo</th><th>Gênero</th><th></th></tr></thead>
-        <tbody id="tabelaProdutos"></tbody>
-      </table>
-    </div>
-  </main>
+      </div>
+    </main>
+  </div>
 </div>
 <script src="js/api.js"></script>
 <script src="js/sidebar.js"></script>
+<script src="js/topbar.js"></script>
 <script src="js/produtos.js"></script>
 </body>
 </html>

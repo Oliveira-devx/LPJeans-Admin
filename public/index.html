@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="tela-login">
+<div class="tela-login" id="telaLogin">
 
   <div class="login-lateral">
     <p class="selo">LP Jeans · Moda Feminina</p>
@@ -45,7 +45,10 @@
           </button>
         </div>
 
-        <button type="submit" class="primario">Entrar</button>
+        <button type="submit" class="primario" id="btnEntrar">
+          <span class="spinner-botao"></span>
+          <span class="texto-botao">Entrar</span>
+        </button>
       </form>
 
       <div id="msg" class="msg"></div>
@@ -62,6 +65,8 @@
   const campoSenha = document.getElementById('senha');
   const iconeAberto = document.getElementById('iconeOlhoAberto');
   const iconeFechado = document.getElementById('iconeOlhoFechado');
+  const telaLogin = document.getElementById('telaLogin');
+  const btnEntrar = document.getElementById('btnEntrar');
 
   btnMostrar.addEventListener('click', function () {
     const oculto = campoSenha.type === 'password';
@@ -77,6 +82,8 @@
     const senha = document.getElementById('senha').value;
     const msg = document.getElementById('msg');
     msg.className = 'msg';
+    btnEntrar.classList.add('carregando');
+    btnEntrar.disabled = true;
 
     fetch('/api/auth/login', {
       method: 'POST',
@@ -90,14 +97,22 @@
       })
       .then(function (resultado) {
         if (!resultado.ok) {
+          btnEntrar.classList.remove('carregando');
+          btnEntrar.disabled = false;
           msg.textContent = resultado.dados.erro || 'Não foi possível entrar.';
           msg.className = 'msg erro';
           return;
         }
         sessionStorage.setItem('token', resultado.dados.token);
-        window.location.href = '/dashboard.html';
+        // Transição de saída suave antes de trocar de página
+        telaLogin.classList.add('saindo');
+        setTimeout(function () {
+          window.location.href = '/dashboard.html';
+        }, 320);
       })
       .catch(function () {
+        btnEntrar.classList.remove('carregando');
+        btnEntrar.disabled = false;
         msg.textContent = 'Não foi possível conectar ao servidor.';
         msg.className = 'msg erro';
       });

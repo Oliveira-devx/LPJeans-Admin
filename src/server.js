@@ -9,6 +9,7 @@ const tiposProdutoRoutes = require('./routes/tiposProduto');
 const produtosRoutes = require('./routes/produtos');
 const variacoesRoutes = require('./routes/variacoes');
 const clientesRoutes = require('./routes/clientes');
+const fornecedoresRoutes = require('./routes/fornecedores');
 const authMiddleware = require('./middleware/auth');
 
 const app = express();
@@ -23,6 +24,7 @@ app.use('/api/tipos-produto', authMiddleware, tiposProdutoRoutes);
 app.use('/api/produtos', authMiddleware, produtosRoutes);
 app.use('/api/produtos/:id_produto/variacoes', authMiddleware, variacoesRoutes);
 app.use('/api/clientes', authMiddleware, clientesRoutes);
+app.use('/api/fornecedores', authMiddleware, fornecedoresRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -1,5 +1,6 @@
 exigirLogin();
 montarSidebar('clientes');
+montarTopbar('Clientes');
 
 let timerBusca = null;
 

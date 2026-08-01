@@ -1,6 +1,10 @@
 exigirLogin();
 montarSidebar('dashboard');
+montarTopbar('Dashboard');
 
+// Indicadores que já temos dado real, e os que dependem de módulos
+// futuros (Vendas, Clientes, Compras, Caixa) — mostramos "—" de forma
+// honesta em vez de inventar um número.
 const INDICADORES_BASE = [
   { chave: 'vendasHoje', rotulo: 'Vendas de hoje', disponivel: false },
   { chave: 'faturamentoDia', rotulo: 'Faturamento do dia', disponivel: false },
@@ -24,13 +28,23 @@ function renderizarIndicadores(valores) {
 
 async function carregarDashboard() {
   const produtos = await apiFetch('/api/produtos');
+
+  // Busca as variações de cada produto para calcular estoque baixo.
+  // Para o catálogo pequeno de uma loja, isso é rápido; se o catálogo
+  // crescer muito no futuro, esse cálculo deve virar uma rota própria
+  // no backend (ex: /api/estoque/baixo) para não sobrecarregar o navegador.
   const todasVariacoes = await Promise.all(
     produtos.map(p => apiFetch(`/api/produtos/${p.id_produto}/variacoes`)
       .then(vs => vs.map(v => ({ ...v, produto: p.descricao }))))
   );
-  const variacoesBaixas = todasVariacoes.flat().filter(v => v.ativo && v.quantidade_atual <= v.estoque_minimo);
 
-  renderizarIndicadores({ produtosCadastrados: produtos.length, estoqueBaixo: variacoesBaixas.length });
+  const variacoesBaixas = todasVariacoes.flat()
+    .filter(v => v.ativo && v.quantidade_atual <= v.estoque_minimo);
+
+  renderizarIndicadores({
+    produtosCadastrados: produtos.length,
+    estoqueBaixo: variacoesBaixas.length,
+  });
 
   const tbody = document.getElementById('tabelaEstoqueBaixo');
   if (variacoesBaixas.length === 0) {
@@ -38,8 +52,11 @@ async function carregarDashboard() {
   } else {
     tbody.innerHTML = variacoesBaixas.map(v => `
       <tr>
-        <td>${v.produto}</td><td>${v.tamanho}</td><td>${v.cor}</td>
-        <td><span class="badge-baixo">${v.quantidade_atual}</span></td><td>${v.estoque_minimo}</td>
+        <td>${v.produto}</td>
+        <td>${v.tamanho}</td>
+        <td>${v.cor}</td>
+        <td><span class="badge-baixo">${v.quantidade_atual}</span></td>
+        <td>${v.estoque_minimo}</td>
       </tr>
     `).join('');
   }
@@ -47,5 +64,6 @@ async function carregarDashboard() {
 
 carregarDashboard().catch(erro => {
   console.error(erro);
-  document.getElementById('tabelaEstoqueBaixo').innerHTML = '<tr><td colspan="5">Não foi possível carregar os dados.</td></tr>';
+  document.getElementById('tabelaEstoqueBaixo').innerHTML =
+    '<tr><td colspan="5">Não foi possível carregar os dados.</td></tr>';
 });
