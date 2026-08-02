@@ -19,15 +19,21 @@ const ITENS_MENU = [
   { id: 'dashboard', label: 'Dashboard', href: 'dashboard.html' },
   { id: 'vendas', label: 'Vendas', href: 'em-construcao.html?modulo=Vendas' },
   { id: 'produtos', label: 'Produtos', href: 'produtos.html' },
-  { id: 'compras', label: 'Compras', href: 'em-construcao.html?modulo=Compras' },
+  { id: 'compras', label: 'Compras', href: 'compras.html', restrito: true },
   { id: 'estoque', label: 'Estoque', href: 'em-construcao.html?modulo=Estoque' },
   { id: 'clientes', label: 'Clientes', href: 'clientes.html' },
-  { id: 'fornecedores', label: 'Fornecedores', href: 'fornecedores.html' },
+  { id: 'fornecedores', label: 'Fornecedores', href: 'fornecedores.html', restrito: true },
   { id: 'caixa', label: 'Caixa', href: 'em-construcao.html?modulo=Caixa' },
   { id: 'relatorios', label: 'Relatórios', href: 'em-construcao.html?modulo=Relatórios' },
-  { id: 'usuarios', label: 'Usuários', href: 'em-construcao.html?modulo=Usuários' },
+  { id: 'usuarios', label: 'Usuários', href: 'usuarios.html', restrito: true },
   { id: 'configuracoes', label: 'Configurações', href: 'em-construcao.html?modulo=Configurações' },
 ];
+
+// Cargos que enxergam os itens marcados como "restrito" no menu.
+// Isso é só uma conveniência visual — a restrição de verdade acontece
+// no backend (ver middleware/permissoes.js), então mesmo que alguém
+// digite a URL direto, o servidor bloqueia de qualquer forma.
+const CARGOS_ADMIN = ['Administrador', 'Proprietaria'];
 
 function svgIcone(nome) {
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONES_MENU[nome]}</svg>`;
@@ -37,7 +43,11 @@ function montarSidebar(paginaAtiva) {
   const container = document.getElementById('sidebar-container');
   if (!container) return;
 
-  const itensHtml = ITENS_MENU.map(item => `
+  const usuario = pegarUsuarioAtual();
+  const ehAdmin = usuario && CARGOS_ADMIN.includes(usuario.cargo);
+  const itensVisiveis = ITENS_MENU.filter(item => !item.restrito || ehAdmin);
+
+  const itensHtml = itensVisiveis.map(item => `
     <a href="${item.href}" class="${item.id === paginaAtiva ? 'ativo' : ''}">
       ${svgIcone(item.id)} ${item.label}
     </a>

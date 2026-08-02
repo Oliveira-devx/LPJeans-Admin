@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LP Jeans — Usuários</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+  <div id="sidebar-container"></div>
+  <div class="coluna-principal">
+    <div id="topbar-container"></div>
+    <main class="conteudo">
+
+      <div class="card">
+        <h2>Novo funcionário</h2>
+        <p style="font-size:12.5px; color:var(--texto-suave); margin-top:-8px; margin-bottom:14px;">
+          Funcionários aparecem nos seletores de "responsável" em Compras, Estoque e Vendas — não é um login próprio, já que o sistema usa acesso único compartilhado.
+        </p>
+        <form id="formFuncionario">
+          <div class="campo"><label for="nome">Nome *</label><input type="text" id="nome" required></div>
+          <div class="campo"><label for="cargo">Cargo *</label>
+            <select id="cargo" required>
+              <option value="">Selecione...</option>
+              <option value="Proprietaria">Proprietária</option>
+              <option value="Administrador">Administrador</option>
+              <option value="Vendedora">Vendedora</option>
+            </select>
+          </div>
+          <div class="campo"><label for="telefone">Telefone</label><input type="text" id="telefone"></div>
+          <div class="campo"><label for="email">E-mail</label><input type="email" id="email"></div>
+          <button type="submit" class="primario">Cadastrar funcionário</button>
+        </form>
+        <div id="msgFuncionario" class="msg"></div>
+      </div>
+
+      <div class="card">
+        <h2>Funcionários cadastrados</h2>
+        <div class="wrapper-tabela">
+          <table>
+            <thead><tr><th>Nome</th><th>Cargo</th><th>Telefone</th><th>E-mail</th><th></th></tr></thead>
+            <tbody id="tabelaFuncionarios"><tr><td colspan="5">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Criar login de acesso</h2>
+        <p style="font-size:12.5px; color:var(--texto-suave); margin-top:-8px; margin-bottom:14px;">
+          Cada funcionário pode ter seu próprio login. Só Administrador e Proprietária conseguem ver e usar esta seção.
+        </p>
+        <form id="formNovoUsuario">
+          <div class="campo"><label for="funcionarioLogin">Funcionário *</label><select id="funcionarioLogin" required></select></div>
+          <div class="campo"><label for="loginNovo">Login *</label><input type="text" id="loginNovo" required></div>
+          <div class="campo"><label for="senhaNovo">Senha (mín. 8 caracteres) *</label><input type="password" id="senhaNovo" required minlength="8"></div>
+          <button type="submit" class="primario">Criar login</button>
+        </form>
+        <div id="msgNovoUsuario" class="msg"></div>
+      </div>
+
+      <div class="card">
+        <h2>Logins cadastrados</h2>
+        <div class="wrapper-tabela">
+          <table>
+            <thead><tr><th>Funcionário</th><th>Cargo</th><th>Login</th><th>Status</th><th>Último login</th><th></th></tr></thead>
+            <tbody id="tabelaUsuarios"><tr><td colspan="6">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Acesso ao sistema (minha conta)</h2>
+        <p style="font-size:12.5px; color:var(--texto-suave); margin-top:-8px; margin-bottom:14px;">
+          Dados da conta com a qual você está logado agora.
+        </p>
+        <div id="statusAcesso" style="display:flex; gap:24px; flex-wrap:wrap; margin-bottom:18px; font-size:13.5px;">
+          Carregando status...
+        </div>
+
+        <h2 style="margin-top:6px;">Trocar minha senha</h2>
+        <form id="formSenha">
+          <div class="campo"><label for="senhaAtual">Senha atual</label><input type="password" id="senhaAtual" required></div>
+          <div class="campo"><label for="senhaNova">Nova senha (mín. 8 caracteres)</label><input type="password" id="senhaNova" required minlength="8"></div>
+          <button type="submit" class="primario">Trocar senha</button>
+        </form>
+        <div id="msgSenha" class="msg"></div>
+      </div>
+
+    </main>
+  </div>
+</div>
+<script src="js/api.js"></script>
+<script src="js/sidebar.js"></script>
+<script src="js/topbar.js"></script>
+<script src="js/usuarios.js"></script>
+</body>
+</html>

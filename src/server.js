@@ -10,7 +10,10 @@ const produtosRoutes = require('./routes/produtos');
 const variacoesRoutes = require('./routes/variacoes');
 const clientesRoutes = require('./routes/clientes');
 const fornecedoresRoutes = require('./routes/fornecedores');
+const comprasRoutes = require('./routes/compras');
+const usuariosRoutes = require('./routes/usuarios');
 const authMiddleware = require('./middleware/auth');
+const permitirCargos = require('./middleware/permissoes');
 
 const app = express();
 
@@ -24,7 +27,13 @@ app.use('/api/tipos-produto', authMiddleware, tiposProdutoRoutes);
 app.use('/api/produtos', authMiddleware, produtosRoutes);
 app.use('/api/produtos/:id_produto/variacoes', authMiddleware, variacoesRoutes);
 app.use('/api/clientes', authMiddleware, clientesRoutes);
-app.use('/api/fornecedores', authMiddleware, fornecedoresRoutes);
+
+// Módulos administrativos/financeiros — restritos a Administrador e Proprietaria.
+// Vendedoras não precisam (e não devem) enxergar fornecedores, compras ou
+// gerenciar outros usuários no dia a dia de venda.
+app.use('/api/fornecedores', authMiddleware, permitirCargos('Administrador', 'Proprietaria'), fornecedoresRoutes);
+app.use('/api/compras', authMiddleware, permitirCargos('Administrador', 'Proprietaria'), comprasRoutes);
+app.use('/api/usuarios', authMiddleware, permitirCargos('Administrador', 'Proprietaria'), usuariosRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const pool = require('../config/db');
+const authMiddleware = require('../middleware/auth');
 
 const MAX_TENTATIVAS = 5;
 
@@ -16,13 +17,14 @@ router.post('/login', async (req, res) => {
     }
 
     const resultado = await pool.query(
-      `SELECT id_usuario, login, senha_hash, bloqueado, ativo, tentativas_login
-       FROM usuarios WHERE login = $1`,
+      `SELECT u.id_usuario, u.login, u.senha_hash, u.bloqueado, u.ativo, u.tentativas_login,
+              f.id_funcionario, f.nome, f.cargo
+       FROM usuarios u
+       JOIN funcionarios f ON f.id_funcionario = u.id_funcionario
+       WHERE u.login = $1`,
       [login]
     );
 
-    // Mensagem genérica de propósito: não revelamos se o erro foi
-    // "login não existe" ou "senha errada" — evita dar dica a invasores.
     if (resultado.rows.length === 0) {
       return res.status(401).json({ erro: 'Login ou senha inválidos.' });
     }
@@ -51,15 +53,19 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ erro: 'Login ou senha inválidos.' });
     }
 
-    // Login certo: zera as tentativas e registra o horário
     await pool.query(
       `UPDATE usuarios SET tentativas_login = 0, ultimo_login = CURRENT_TIMESTAMP WHERE id_usuario = $1`,
       [usuario.id_usuario]
     );
 
-    // Token válido por 14 horas — cobre um turno inteiro de trabalho
     const token = jwt.sign(
-      { id_usuario: usuario.id_usuario, login: usuario.login },
+      {
+        id_usuario: usuario.id_usuario,
+        login: usuario.login,
+        id_funcionario: usuario.id_funcionario,
+        nome: usuario.nome,
+        cargo: usuario.cargo,
+      },
       process.env.JWT_SECRET,
       { expiresIn: '14h' }
     );
@@ -68,6 +74,79 @@ router.post('/login', async (req, res) => {
   } catch (erro) {
     console.error(erro);
     res.status(500).json({ erro: 'Erro ao efetuar login.' });
+  }
+});
+
+// GET /api/auth/status -> dados da conta de acesso do usuário logado
+// (protegida: exige token válido, já que só faz sentido "ver meu status" logado)
+router.get('/status', authMiddleware, async (req, res) => {
+  try {
+    const resultado = await pool.query(
+      `SELECT login, bloqueado, tentativas_login, ultimo_login FROM usuarios WHERE id_usuario = $1`,
+      [req.usuario.id_usuario]
+    );
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({ erro: 'Usuário não encontrado.' });
+    }
+    res.json(resultado.rows[0]);
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: 'Erro ao buscar status da conta.' });
+  }
+});
+
+// POST /api/auth/resetar-tentativas -> zera o contador de tentativas erradas
+// Útil como medida preventiva: se alguém errou a senha algumas vezes mas
+// já conseguiu entrar depois, dá pra zerar o contador sem esperar acumular
+// erro futuro em cima de erro antigo.
+router.post('/resetar-tentativas', authMiddleware, async (req, res) => {
+  try {
+    await pool.query(
+      `UPDATE usuarios SET tentativas_login = 0 WHERE id_usuario = $1`,
+      [req.usuario.id_usuario]
+    );
+    res.json({ mensagem: 'Tentativas de login resetadas com sucesso.' });
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: 'Erro ao resetar tentativas.' });
+  }
+});
+
+// PUT /api/auth/senha -> troca a senha, exigindo a senha atual como confirmação
+router.put('/senha', authMiddleware, async (req, res) => {
+  try {
+    const { senha_atual, senha_nova } = req.body;
+
+    if (!senha_atual || !senha_nova) {
+      return res.status(400).json({ erro: 'Informe a senha atual e a nova senha.' });
+    }
+    if (senha_nova.length < 8) {
+      return res.status(400).json({ erro: 'A nova senha precisa ter pelo menos 8 caracteres.' });
+    }
+
+    const resultado = await pool.query(
+      `SELECT senha_hash FROM usuarios WHERE id_usuario = $1`,
+      [req.usuario.id_usuario]
+    );
+    if (resultado.rows.length === 0) {
+      return res.status(404).json({ erro: 'Usuário não encontrado.' });
+    }
+
+    const senhaAtualCorreta = await bcrypt.compare(senha_atual, resultado.rows[0].senha_hash);
+    if (!senhaAtualCorreta) {
+      return res.status(401).json({ erro: 'Senha atual incorreta.' });
+    }
+
+    const novoHash = await bcrypt.hash(senha_nova, 10);
+    await pool.query(
+      `UPDATE usuarios SET senha_hash = $1 WHERE id_usuario = $2`,
+      [novoHash, req.usuario.id_usuario]
+    );
+
+    res.json({ mensagem: 'Senha alterada com sucesso.' });
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: 'Erro ao alterar senha.' });
   }
 });
 

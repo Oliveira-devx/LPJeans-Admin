@@ -1,28 +1,14 @@
 // Barra superior compartilhada. Cada página chama montarTopbar('Título da página')
 // depois de montarSidebar(). Precisa de <div id="topbar-container"></div>.
-
-function pegarUsuarioAtual() {
-  const token = sessionStorage.getItem('token');
-  if (!token) return null;
-  try {
-    // O token JWT tem 3 partes separadas por ".". A parte do meio (payload)
-    // é só um texto em base64 — aqui a gente só LÊ ela pra mostrar o nome
-    // de usuário na tela, não estamos validando a assinatura (quem garante
-    // que o token é válido de verdade é sempre o backend, em cada requisição).
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload;
-  } catch (erro) {
-    return null;
-  }
-}
+// (pegarUsuarioAtual agora vive em api.js, compartilhada com sidebar.js)
 
 function montarTopbar(tituloPagina) {
   const container = document.getElementById('topbar-container');
   if (!container) return;
 
   const usuario = pegarUsuarioAtual();
-  const login = usuario ? usuario.login : 'usuário';
-  const inicial = login.charAt(0).toUpperCase();
+  const nome = usuario ? (usuario.nome || usuario.login) : 'usuário';
+  const inicial = nome.charAt(0).toUpperCase();
 
   container.innerHTML = `
     <header class="topbar">
@@ -40,7 +26,7 @@ function montarTopbar(tituloPagina) {
         <div class="menu-usuario">
           <button class="botao-usuario" id="botaoUsuario">
             <div class="avatar-usuario">${inicial}</div>
-            <span class="nome-usuario">${login}</span>
+            <span class="nome-usuario">${nome}</span>
             <svg class="seta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="dropdown-usuario" id="dropdownUsuario">

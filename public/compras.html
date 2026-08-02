@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LP Jeans — Compras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+  <div id="sidebar-container"></div>
+  <div class="coluna-principal">
+    <div id="topbar-container"></div>
+    <main class="conteudo">
+
+      <div class="card">
+        <h2>Dados da compra</h2>
+        <form onsubmit="return false;">
+          <div class="campo"><label for="fornecedor">Fornecedor *</label><select id="fornecedor"></select></div>
+          <div class="campo"><label for="funcionario">Registrado por *</label><select id="funcionario"></select></div>
+          <div class="campo"><label for="numeroNota">Nº da nota</label><input type="text" id="numeroNota"></div>
+          <div class="campo"><label for="dataCompra">Data da compra *</label><input type="date" id="dataCompra"></div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Adicionar item</h2>
+        <form id="formItem">
+          <div class="campo"><label for="produtoItem">Produto</label><select id="produtoItem"></select></div>
+          <div class="campo"><label for="variacaoItem">Tamanho / Cor</label><select id="variacaoItem"><option value="">Selecione um produto primeiro</option></select></div>
+          <div class="campo" style="max-width:110px;"><label for="quantidadeItem">Quantidade</label><input type="number" id="quantidadeItem" min="1" value="1"></div>
+          <div class="campo" style="max-width:140px;"><label for="precoCustoItem">Preço de custo</label><input type="number" id="precoCustoItem" min="0" step="0.01" placeholder="0,00"></div>
+          <button type="submit" class="primario">Adicionar item</button>
+        </form>
+        <div id="msgItem" class="msg"></div>
+      </div>
+
+      <div class="card">
+        <h2>Itens da compra</h2>
+        <div class="wrapper-tabela">
+          <table>
+            <thead><tr><th>Produto</th><th>Tam.</th><th>Cor</th><th>Qtd.</th><th>Preço custo</th><th>Subtotal</th><th></th></tr></thead>
+            <tbody id="tabelaItensCompra"><tr><td colspan="7">Nenhum item adicionado ainda.</td></tr></tbody>
+          </table>
+        </div>
+        <div style="text-align:right; margin-top:14px; font-size:16px;">
+          <strong>Total: <span id="valorTotalCompra">R$ 0,00</span></strong>
+        </div>
+        <div style="margin-top:14px;">
+          <button class="primario" id="btnFinalizarCompra" style="width:100%; padding:13px; font-size:15px;">Finalizar compra</button>
+        </div>
+        <div id="msgCompra" class="msg"></div>
+      </div>
+
+      <div class="card">
+        <h2>Compras registradas</h2>
+        <div class="wrapper-tabela">
+          <table>
+            <thead><tr><th>Data</th><th>Fornecedor</th><th>Nota</th><th>Responsável</th><th>Valor total</th></tr></thead>
+            <tbody id="tabelaCompras"><tr><td colspan="5">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+<script src="js/api.js"></script>
+<script src="js/sidebar.js"></script>
+<script src="js/topbar.js"></script>
+<script src="js/compras.js"></script>
+</body>
+</html>
