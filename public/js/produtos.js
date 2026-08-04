@@ -22,6 +22,7 @@ async function carregarProdutos() {
       <td>${p.descricao}</td>
       <td>${p.tipo || '—'}</td>
       <td>${p.genero || '—'}</td>
+      <td>${Number(p.preco_venda).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
       <td><button class="secundario" onclick="alternarVariacoes(${p.id_produto}, this)">Ver variações</button></td>
     `;
     tbody.appendChild(linha);
@@ -136,6 +137,7 @@ document.getElementById('formProduto').addEventListener('submit', async (e) => {
     genero: document.getElementById('genero').value || null,
     tecido: document.getElementById('tecido').value || null,
     colecao: document.getElementById('colecao').value || null,
+    preco_venda: Number(document.getElementById('precoVenda').value),
   };
 
   try {

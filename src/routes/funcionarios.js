@@ -11,7 +11,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
-const permitirCargos = require('../middleware/permissoes');
+const { permitirModulo } = require('../middleware/permissoes');
 
 // GET /api/funcionarios -> lista todos os funcionários ativos
 router.get('/', async (req, res) => {
@@ -50,7 +50,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /api/funcionarios -> cria um novo funcionário (só Administrador/Proprietaria)
-router.post('/', permitirCargos('Administrador', 'Proprietaria'), async (req, res) => {
+router.post('/', permitirModulo('funcionarios'), async (req, res) => {
   try {
     const { nome, cargo, telefone, email } = req.body;
 
@@ -80,7 +80,7 @@ router.post('/', permitirCargos('Administrador', 'Proprietaria'), async (req, re
 });
 
 // PUT /api/funcionarios/:id -> atualiza um funcionário (só Administrador/Proprietaria)
-router.put('/:id', permitirCargos('Administrador', 'Proprietaria'), async (req, res) => {
+router.put('/:id', permitirModulo('funcionarios'), async (req, res) => {
   try {
     const { id } = req.params;
     const { nome, cargo, telefone, email, ativo } = req.body;
@@ -109,7 +109,7 @@ router.put('/:id', permitirCargos('Administrador', 'Proprietaria'), async (req, 
 });
 
 // DELETE /api/funcionarios/:id -> inativa (nunca apaga de verdade num ERP) (só Administrador/Proprietaria)
-router.delete('/:id', permitirCargos('Administrador', 'Proprietaria'), async (req, res) => {
+router.delete('/:id', permitirModulo('funcionarios'), async (req, res) => {
   try {
     const { id } = req.params;
     const resultado = await pool.query(

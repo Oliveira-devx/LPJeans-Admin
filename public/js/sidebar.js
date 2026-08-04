@@ -1,5 +1,10 @@
 // Menu lateral compartilhado. Cada página só precisa ter uma
 // <div id="sidebar-container"></div> e chamar montarSidebar('id-da-pagina').
+//
+// A visibilidade dos itens "restritos" agora vem do backend (tabela
+// permissoes_modulo, editável em Configurações > Permissões) — isso aqui
+// só decide o que MOSTRAR; quem decide o que é PERMITIDO de verdade é
+// sempre o servidor, em cada requisição.
 
 const ICONES_MENU = {
   dashboard: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
@@ -15,37 +20,50 @@ const ICONES_MENU = {
   configuracoes: '<line x1="4" y1="6" x2="20" y2="6"/><circle cx="9" cy="6" r="2"/><line x1="4" y1="12" x2="20" y2="12"/><circle cx="15" cy="12" r="2"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="9" cy="18" r="2"/>',
 };
 
+// moduloChave: nome usado na tabela permissoes_modulo (null = sempre visível
+// pra qualquer cargo logado). adminApenas: só Administrador/Proprietaria,
+// nunca configurável (evita paradoxo de travar o próprio acesso).
 const ITENS_MENU = [
-  { id: 'dashboard', label: 'Dashboard', href: 'dashboard.html' },
-  { id: 'vendas', label: 'Vendas', href: 'em-construcao.html?modulo=Vendas' },
-  { id: 'produtos', label: 'Produtos', href: 'produtos.html' },
-  { id: 'compras', label: 'Compras', href: 'compras.html', restrito: true },
-  { id: 'estoque', label: 'Estoque', href: 'em-construcao.html?modulo=Estoque' },
-  { id: 'clientes', label: 'Clientes', href: 'clientes.html' },
-  { id: 'fornecedores', label: 'Fornecedores', href: 'fornecedores.html', restrito: true },
-  { id: 'caixa', label: 'Caixa', href: 'em-construcao.html?modulo=Caixa' },
-  { id: 'relatorios', label: 'Relatórios', href: 'em-construcao.html?modulo=Relatórios' },
-  { id: 'usuarios', label: 'Usuários', href: 'usuarios.html', restrito: true },
-  { id: 'configuracoes', label: 'Configurações', href: 'em-construcao.html?modulo=Configurações' },
+  { id: 'dashboard', label: 'Dashboard', href: 'dashboard.html', moduloChave: null },
+  { id: 'vendas', label: 'Vendas', href: 'vendas.html', moduloChave: null },
+  { id: 'produtos', label: 'Produtos', href: 'produtos.html', moduloChave: null },
+  { id: 'compras', label: 'Compras', href: 'compras.html', moduloChave: 'compras' },
+  { id: 'estoque', label: 'Estoque', href: 'em-construcao.html?modulo=Estoque', moduloChave: null },
+  { id: 'clientes', label: 'Clientes', href: 'clientes.html', moduloChave: null },
+  { id: 'fornecedores', label: 'Fornecedores', href: 'fornecedores.html', moduloChave: 'fornecedores' },
+  { id: 'caixa', label: 'Caixa', href: 'em-construcao.html?modulo=Caixa', moduloChave: null },
+  { id: 'relatorios', label: 'Relatórios', href: 'em-construcao.html?modulo=Relatórios', moduloChave: 'relatorios' },
+  { id: 'usuarios', label: 'Usuários', href: 'usuarios.html', moduloChave: 'usuarios' },
+  { id: 'configuracoes', label: 'Configurações', href: 'configuracoes.html', adminApenas: true },
 ];
-
-// Cargos que enxergam os itens marcados como "restrito" no menu.
-// Isso é só uma conveniência visual — a restrição de verdade acontece
-// no backend (ver middleware/permissoes.js), então mesmo que alguém
-// digite a URL direto, o servidor bloqueia de qualquer forma.
-const CARGOS_ADMIN = ['Administrador', 'Proprietaria'];
 
 function svgIcone(nome) {
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONES_MENU[nome]}</svg>`;
 }
 
-function montarSidebar(paginaAtiva) {
+async function montarSidebar(paginaAtiva) {
   const container = document.getElementById('sidebar-container');
   if (!container) return;
 
   const usuario = pegarUsuarioAtual();
-  const ehAdmin = usuario && CARGOS_ADMIN.includes(usuario.cargo);
-  const itensVisiveis = ITENS_MENU.filter(item => !item.restrito || ehAdmin);
+  const ehAdmin = usuario && ['Administrador', 'Proprietaria'].includes(usuario.cargo);
+
+  let modulosLiberados = [];
+  if (!ehAdmin) {
+    try {
+      const minhas = await apiFetch('/api/permissoes/minhas');
+      modulosLiberados = minhas.modulos || [];
+    } catch (erro) {
+      // Se der erro consultando permissões, por segurança mostramos só o básico.
+      modulosLiberados = [];
+    }
+  }
+
+  const itensVisiveis = ITENS_MENU.filter(item => {
+    if (item.adminApenas) return ehAdmin;
+    if (!item.moduloChave) return true; // módulo básico, todo mundo logado vê
+    return ehAdmin || modulosLiberados.includes(item.moduloChave);
+  });
 
   const itensHtml = itensVisiveis.map(item => `
     <a href="${item.href}" class="${item.id === paginaAtiva ? 'ativo' : ''}">

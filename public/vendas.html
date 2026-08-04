@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LP Jeans — Vendas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .resultado-busca {
+    border: 1px solid var(--borda); border-radius: 10px; margin-top: 8px;
+    max-height: 280px; overflow-y: auto; background: var(--branco);
+  }
+  .resultado-busca .linha-produto { padding: 8px 12px 2px; font-size: 12px; color: var(--texto-suave); font-weight: 600; border-top: 1px solid var(--borda); }
+  .resultado-busca .linha-produto:first-child { border-top: none; }
+  .resultado-busca .linha-variacao {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 14px; cursor: pointer; font-size: 13.5px;
+  }
+  .resultado-busca .linha-variacao:hover { background: var(--creme); }
+  .resultado-busca .linha-variacao.sem-estoque { opacity: 0.45; cursor: not-allowed; }
+  .carrinho-qtd { display: flex; align-items: center; gap: 6px; }
+  .carrinho-qtd button { width: 24px; height: 24px; border-radius: 5px; border: 1px solid var(--borda); background: var(--branco); cursor: pointer; }
+  .carrinho-qtd input { width: 44px; text-align: center; padding: 4px; }
+  .resumo-total { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13.5px; }
+  .resumo-total.final { font-size: 18px; font-weight: 700; color: var(--pinho-escuro); border-top: 1px solid var(--borda); margin-top: 6px; padding-top: 12px; }
+  .linha-pagamento { display: flex; gap: 10px; align-items: end; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div id="sidebar-container"></div>
+  <div class="coluna-principal">
+    <div id="topbar-container"></div>
+    <main class="conteudo">
+
+      <!-- ===== Estado 1: nenhuma venda ativa ===== -->
+      <div id="painelInicio">
+        <div class="card">
+          <h2>Iniciar nova venda</h2>
+          <form id="formNovaVenda">
+            <div class="campo"><label for="clienteVenda">Cliente (opcional)</label><select id="clienteVenda"><option value="">Sem cliente identificado</option></select></div>
+            <div class="campo"><label for="funcionarioVenda">Vendedor(a) *</label><select id="funcionarioVenda" required></select></div>
+            <button type="submit" class="primario" style="padding:12px 24px; font-size:15px;">Iniciar venda</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>Vendas em aberto</h2>
+          <div class="wrapper-tabela">
+            <table>
+              <thead><tr><th>Cliente</th><th>Vendedor(a)</th><th>Iniciada em</th><th></th></tr></thead>
+              <tbody id="tabelaVendasAbertas"><tr><td colspan="4">Carregando...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Estado 2: venda ativa (carrinho) ===== -->
+      <div id="painelVenda" style="display:none;">
+        <div class="card">
+          <h2>Buscar produto</h2>
+          <div class="campo">
+            <input type="text" id="buscaProduto" placeholder="Digite o nome ou referência do produto..." autocomplete="off">
+          </div>
+          <div id="resultadoBusca" class="resultado-busca" style="display:none;"></div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <h2 style="margin:0;">Itens da venda</h2>
+            <button class="secundario" onclick="cancelarVendaAtual()">Cancelar venda</button>
+          </div>
+          <div class="wrapper-tabela">
+            <table>
+              <thead><tr><th>Produto</th><th>Tam.</th><th>Cor</th><th>Qtd.</th><th>Preço</th><th>Subtotal</th><th></th></tr></thead>
+              <tbody id="tabelaCarrinho"><tr><td colspan="7">Carrinho vazio — busque um produto acima.</td></tr></tbody>
+            </table>
+          </div>
+
+          <div style="max-width:280px; margin-left:auto; margin-top:16px;">
+            <div class="resumo-total"><span>Subtotal</span><span id="resumoSubtotal">R$ 0,00</span></div>
+            <div class="resumo-total">
+              <span>Desconto geral</span>
+              <input type="number" id="descontoGeral" min="0" step="0.01" value="0" style="width:100px; text-align:right;">
+            </div>
+            <div class="resumo-total final"><span>Total</span><span id="resumoFinal">R$ 0,00</span></div>
+          </div>
+
+          <button class="primario" id="btnAbrirPagamento" style="width:100%; padding:14px; font-size:16px; margin-top:16px;">
+            Finalizar venda
+          </button>
+        </div>
+
+        <div class="card" id="cardPagamento" style="display:none;">
+          <h2>Pagamento</h2>
+          <div id="linhasPagamento"></div>
+          <button class="secundario" onclick="adicionarLinhaPagamento()">+ Adicionar forma de pagamento</button>
+          <div class="resumo-total" style="margin-top:14px;"><span>Restante a pagar</span><strong id="restantePagar">R$ 0,00</strong></div>
+          <button class="primario" id="btnConfirmarPagamento" style="width:100%; padding:14px; font-size:16px; margin-top:12px;">
+            Confirmar e finalizar
+          </button>
+          <div id="msgFinalizacao" class="msg"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+<script src="js/api.js"></script>
+<script src="js/sidebar.js"></script>
+<script src="js/topbar.js"></script>
+<script src="js/vendas.js"></script>
+</body>
+</html>

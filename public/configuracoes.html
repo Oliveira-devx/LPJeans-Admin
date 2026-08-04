@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LP Jeans — Configurações</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+  <div id="sidebar-container"></div>
+  <div class="coluna-principal">
+    <div id="topbar-container"></div>
+    <main class="conteudo">
+
+      <div class="card">
+        <h2>Permissões por cargo</h2>
+        <p style="font-size:12.5px; color:var(--texto-suave); margin-top:-8px; margin-bottom:16px;">
+          Administrador e Proprietária sempre têm acesso total a tudo — isso não pode ser alterado, pra evitar
+          que ninguém fique acidentalmente sem acesso ao sistema. Marque abaixo o que cada outro cargo pode acessar.
+          As mudanças valem imediatamente, sem precisar reiniciar nada.
+        </p>
+        <div id="matrizPermissoes">Carregando...</div>
+      </div>
+
+    </main>
+  </div>
+</div>
+<script src="js/api.js"></script>
+<script src="js/sidebar.js"></script>
+<script src="js/topbar.js"></script>
+<script src="js/configuracoes.js"></script>
+</body>
+</html>
