@@ -24,7 +24,7 @@ function montarTopbar(tituloPagina) {
         </button>
 
         <div class="menu-usuario">
-          <button class="botao-usuario" id="botaoUsuario">
+          <button class="botao-usuario" id="botaoUsuario" aria-expanded="false">
             <div class="avatar-usuario">${inicial}</div>
             <span class="nome-usuario">${nome}</span>
             <svg class="seta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
@@ -42,10 +42,13 @@ function montarTopbar(tituloPagina) {
 
   document.getElementById('botaoUsuario').addEventListener('click', (e) => {
     e.stopPropagation();
-    document.getElementById('dropdownUsuario').classList.toggle('aberto');
+    const dropdown = document.getElementById('dropdownUsuario');
+    const aberto = dropdown.classList.toggle('aberto');
+    document.getElementById('botaoUsuario').setAttribute('aria-expanded', aberto ? 'true' : 'false');
   });
   document.addEventListener('click', () => {
     document.getElementById('dropdownUsuario').classList.remove('aberto');
+    document.getElementById('botaoUsuario').setAttribute('aria-expanded', 'false');
   });
   document.getElementById('botaoNotificacoes').addEventListener('click', () => {
     alert('Central de notificações ainda em construção — em breve você verá aqui alertas de estoque baixo, caixa aberto e mais.');

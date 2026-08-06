@@ -3,60 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LP Jeans — Entrar</title>
+<title>Sistema LPJeans — Entrar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div class="tela-login" id="telaLogin">
+  <div class="login-caixa">
+    <img src="img/logo.png" alt="LP Jeans" class="logo">
+    <h1>Bem-vinda de volta</h1>
+    <p class="boas-vindas">Entre com suas credenciais para acessar o sistema.</p>
 
-  <div class="login-lateral">
-    <p class="selo">LP Jeans · Moda Feminina</p>
-    <img src="img/logo.png" alt="LP Jeans" class="logo-grande">
-    <h2>Gestão completa da sua loja, do estoque ao caixa, em um só lugar.</h2>
-    <p class="rodape-citacao">Sistema de gestão desenvolvido sob medida para a LP Jeans.</p>
-  </div>
+    <form id="formLogin">
+      <div class="campo">
+        <label for="login">Usuário</label>
+        <input type="text" id="login" autocomplete="username" required>
+      </div>
 
-  <div class="login-formulario">
-    <div class="login-caixa">
-      <img src="img/logo.png" alt="LP Jeans" class="logo-pequena">
-      <h1>Bem-vinda de volta</h1>
-      <p class="boas-vindas">Entre com suas credenciais para acessar o sistema.</p>
-
-      <form id="formLogin">
-        <div class="campo">
-          <label for="login">Usuário</label>
-          <input type="text" id="login" autocomplete="username" required>
-        </div>
-
-        <div class="campo campo-senha">
-          <label for="senha">Senha</label>
-          <input type="password" id="senha" autocomplete="current-password" required>
-          <button type="button" id="btnMostrarSenha" aria-label="Mostrar senha">
-            <svg id="iconeOlhoAberto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
-              <circle cx="12" cy="12" r="3"/>
-            </svg>
-            <svg id="iconeOlhoFechado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none;">
-              <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a20.6 20.6 0 0 1 5.06-6.06M9.9 4.24A10.6 10.6 0 0 1 12 4c7 0 11 8 11 8a20.6 20.6 0 0 1-3.22 4.44M14.12 14.12a3 3 0 1 1-4.24-4.24"/>
-              <line x1="1" y1="1" x2="23" y2="23"/>
-            </svg>
-          </button>
-        </div>
-
-        <button type="submit" class="primario" id="btnEntrar">
-          <span class="spinner-botao"></span>
-          <span class="texto-botao">Entrar</span>
+      <div class="campo campo-senha">
+        <label for="senha">Senha</label>
+        <input type="password" id="senha" autocomplete="current-password" required>
+        <button type="button" id="btnMostrarSenha" aria-label="Mostrar senha">
+          <svg id="iconeOlhoAberto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          <svg id="iconeOlhoFechado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none;">
+            <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a20.6 20.6 0 0 1 5.06-6.06M9.9 4.24A10.6 10.6 0 0 1 12 4c7 0 11 8 11 8a20.6 20.6 0 0 1-3.22 4.44M14.12 14.12a3 3 0 1 1-4.24-4.24"/>
+            <line x1="1" y1="1" x2="23" y2="23"/>
+          </svg>
         </button>
-      </form>
+      </div>
 
-      <div id="msg" class="msg"></div>
+      <button type="submit" class="primario" id="btnEntrar">
+        <span class="spinner-botao"></span>
+        <span class="texto-botao">Entrar</span>
+      </button>
+    </form>
 
-      <p class="login-rodape">LP Jeans ERP</p>
-    </div>
+    <div id="msg" class="msg"></div>
+    <p class="login-rodape">Sistema LPJeans</p>
   </div>
-
 </div>
 
 <script src="js/api.js"></script>
@@ -104,11 +92,10 @@
           return;
         }
         sessionStorage.setItem('token', resultado.dados.token);
-        // Transição de saída suave antes de trocar de página
         telaLogin.classList.add('saindo');
         setTimeout(function () {
           window.location.href = '/dashboard.html';
-        }, 320);
+        }, 280);
       })
       .catch(function () {
         btnEntrar.classList.remove('carregando');

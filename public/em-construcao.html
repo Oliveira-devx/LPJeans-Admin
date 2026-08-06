@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LP Jeans — Em construção</title>
+<title>Sistema LPJeans — Em construção</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
@@ -31,7 +31,7 @@
   exigirLogin();
   const parametros = new URLSearchParams(window.location.search);
   const nomeModulo = parametros.get('modulo') || 'Módulo';
-  document.title = `LP Jeans — ${nomeModulo}`;
+  document.title = `Sistema LPJeans — ${nomeModulo}`;
 
   const mapaIds = {
     'Vendas': 'vendas', 'Compras': 'compras', 'Estoque': 'estoque',

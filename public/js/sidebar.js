@@ -77,11 +77,11 @@ async function montarSidebar(paginaAtiva) {
         <div class="marca-icone">LP</div>
         <div>
           <p class="marca-nome">LP Jeans</p>
-          <p class="marca-sub">Sistema de Gestão</p>
+          <p class="marca-sub">Sistema LPJeans</p>
         </div>
       </div>
       <nav class="menu">${itensHtml}</nav>
-      <div class="sidebar-rodape">LP Jeans ERP · v1.0</div>
+      <div class="sidebar-rodape">Sistema LPJeans · v1.0</div>
     </aside>
   `;
 }
