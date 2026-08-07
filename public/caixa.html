@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sistema LPJeans — Caixa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+  <div id="sidebar-container"></div>
+  <div class="coluna-principal">
+    <div id="topbar-container"></div>
+    <main class="conteudo">
+
+      <!-- ===== Sem caixa aberto ===== -->
+      <div id="painelAbrir" style="display:none;">
+        <div class="card">
+          <h2>Abrir caixa</h2>
+          <form id="formAbrirCaixa">
+            <div class="campo" style="max-width:160px;"><label for="valorInicial">Valor inicial (troco)</label><input type="number" id="valorInicial" min="0" step="0.01" placeholder="0,00" required></div>
+            <div class="campo"><label for="funcionarioAbertura">Responsável *</label><select id="funcionarioAbertura" required></select></div>
+            <button type="submit" class="primario" style="padding:12px 24px; font-size:15px;">Abrir caixa</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ===== Caixa aberto ===== -->
+      <div id="painelAberto" style="display:none;">
+        <div class="grade-indicadores">
+          <div class="indicador"><div class="rotulo">Valor inicial</div><div class="valor" id="indValorInicial">R$ 0,00</div></div>
+          <div class="indicador"><div class="rotulo">Valor esperado agora</div><div class="valor" id="indValorEsperado">R$ 0,00</div></div>
+          <div class="indicador"><div class="rotulo">Aberto desde</div><div class="valor" style="font-size:16px;" id="indAbertoDesde">—</div></div>
+        </div>
+
+        <div class="card">
+          <h2>Registrar entrada/saída manual</h2>
+          <p style="font-size:12.5px; color:var(--texto-suave); margin-top:-8px; margin-bottom:14px;">
+            Use para sangria (retirar dinheiro) ou suprimento (colocar dinheiro), fora das vendas normais.
+          </p>
+          <form id="formMovimentacao">
+            <div class="campo"><label for="tipoMovimentacao">Tipo</label>
+              <select id="tipoMovimentacao">
+                <option value="SAIDA">Saída (sangria)</option>
+                <option value="ENTRADA">Entrada (suprimento)</option>
+              </select>
+            </div>
+            <div class="campo" style="max-width:140px;"><label for="valorMovimentacao">Valor</label><input type="number" id="valorMovimentacao" min="0.01" step="0.01" required></div>
+            <div class="campo"><label for="descricaoMovimentacao">Descrição</label><input type="text" id="descricaoMovimentacao" placeholder="Ex: troco para outra loja"></div>
+            <button type="submit" class="primario">Registrar</button>
+          </form>
+          <div id="msgMovimentacao" class="msg"></div>
+        </div>
+
+        <div class="card">
+          <h2>Movimentações do caixa</h2>
+          <div class="wrapper-tabela">
+            <table>
+              <thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Valor</th><th>Responsável</th></tr></thead>
+              <tbody id="tabelaMovimentacoes"><tr><td colspan="5">Carregando...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Fechar caixa</h2>
+          <form id="formFecharCaixa">
+            <div class="campo" style="max-width:160px;"><label for="valorContado">Valor contado na gaveta</label><input type="number" id="valorContado" min="0" step="0.01" placeholder="0,00" required></div>
+            <button type="submit" class="primario" style="background:var(--vermelho); box-shadow:none;">Fechar caixa</button>
+          </form>
+          <div id="msgFechamento" class="msg"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Histórico de caixas fechados</h2>
+        <div class="wrapper-tabela">
+          <table>
+            <thead><tr><th>Abertura</th><th>Fechamento</th><th>Responsável</th><th>Esperado</th><th>Contado</th><th>Diferença</th></tr></thead>
+            <tbody id="tabelaHistoricoCaixa"><tr><td colspan="6">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+<script src="js/api.js"></script>
+<script src="js/sidebar.js"></script>
+<script src="js/topbar.js"></script>
+<script src="js/caixa.js"></script>
+</body>
+</html>

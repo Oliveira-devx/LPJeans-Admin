@@ -15,6 +15,8 @@ const usuariosRoutes = require('./routes/usuarios');
 const permissoesRoutes = require('./routes/permissoes');
 const vendasRoutes = require('./routes/vendas');
 const formasPagamentoRoutes = require('./routes/formasPagamento');
+const estoqueRoutes = require('./routes/estoque');
+const caixaRoutes = require('./routes/caixa');
 const authMiddleware = require('./middleware/auth');
 const { permitirModulo, permitirCargos } = require('./middleware/permissoes');
 
@@ -31,16 +33,17 @@ app.use('/api/produtos', authMiddleware, produtosRoutes);
 app.use('/api/produtos/:id_produto/variacoes', authMiddleware, variacoesRoutes);
 app.use('/api/clientes', authMiddleware, clientesRoutes);
 app.use('/api/formas-pagamento', authMiddleware, formasPagamentoRoutes);
-
-// Vendas é o principal módulo — acesso liberado pra qualquer cargo logado
-// (é o trabalho do dia a dia da vendedora). O que É restrito é dar
-// desconto, verificado dentro das próprias rotas de vendas.js.
 app.use('/api/vendas', authMiddleware, vendasRoutes);
+
+// Consulta de estoque é aberta a qualquer cargo logado; o AJUSTE manual
+// (dentro do próprio arquivo de rotas) é que exige a permissão 'estoque'.
+app.use('/api/estoque', authMiddleware, estoqueRoutes);
 
 // Módulos com permissão configurável pela tela de Configurações.
 app.use('/api/fornecedores', authMiddleware, permitirModulo('fornecedores'), fornecedoresRoutes);
 app.use('/api/compras', authMiddleware, permitirModulo('compras'), comprasRoutes);
 app.use('/api/usuarios', authMiddleware, permitirModulo('usuarios'), usuariosRoutes);
+app.use('/api/caixa', authMiddleware, permitirModulo('caixa'), caixaRoutes);
 app.use('/api/permissoes', authMiddleware, permissoesRoutes);
 
 const PORT = process.env.PORT || 3000;

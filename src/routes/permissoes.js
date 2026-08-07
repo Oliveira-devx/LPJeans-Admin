@@ -13,7 +13,6 @@ const MODULOS_CONFIGURAVEIS = [
   { chave: 'usuarios', rotulo: 'Usuários e permissões' },
   { chave: 'vendas_desconto', rotulo: 'Aplicar desconto ou alterar preço na venda' },
   { chave: 'estoque', rotulo: 'Estoque (ajustes manuais)' },
-  { chave: 'vendas', rotulo: 'Vendas' },
   { chave: 'caixa', rotulo: 'Caixa' },
   { chave: 'relatorios', rotulo: 'Relatórios' },
 ];
