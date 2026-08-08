@@ -20,11 +20,6 @@ async function carregarRelatorioVendas(periodo) {
     document.getElementById('indFaturamento').textContent = formatarMoeda(dados.faturamento);
     document.getElementById('indTicketMedio').textContent = formatarMoeda(dados.ticket_medio);
 
-    const dinheiro = dados.por_forma_pagamento.find(f => f.forma === 'Dinheiro');
-    const pix = dados.por_forma_pagamento.find(f => f.forma === 'Pix');
-    document.getElementById('indDinheiro').textContent = formatarMoeda(dinheiro ? dinheiro.total : 0);
-    document.getElementById('indPix').textContent = formatarMoeda(pix ? pix.total : 0);
-
     const tbodyTop = document.getElementById('tabelaTopProdutos');
     tbodyTop.innerHTML = dados.top_produtos.length === 0
       ? '<tr><td colspan="3">Nenhuma venda no período.</td></tr>'
