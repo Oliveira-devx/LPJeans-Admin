@@ -19,6 +19,16 @@ function exigirLogin() {
 }
 
 function sair() {
+  // Registra o logout na auditoria antes de sair — "fire and forget":
+  // não esperamos a resposta, pra não travar o usuário na tela de saída
+  // caso a rede esteja lenta.
+  const token = sessionStorage.getItem('token');
+  if (token) {
+    fetch('/api/auth/logout', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+    }).catch(() => {});
+  }
   sessionStorage.removeItem('token');
   window.location.href = '/index.html';
 }

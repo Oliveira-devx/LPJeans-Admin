@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
+const registrarAuditoria = require('../utils/auditoria');
 
 // Calcula o valor esperado em dinheiro no caixa: valor inicial + entradas
 // manuais - saídas manuais + vendas pagas em dinheiro durante o período
@@ -127,6 +128,11 @@ router.post('/abrir', async (req, res) => {
       [valor_inicial, id_funcionario]
     );
 
+    await registrarAuditoria(pool, {
+      tabela: 'caixa', operacao: 'INSERT', registro: resultado.rows[0].id_caixa,
+      id_funcionario, detalhes: `Caixa aberto — valor inicial: R$ ${Number(valor_inicial).toFixed(2)}`,
+    });
+
     res.status(201).json({ id_caixa: resultado.rows[0].id_caixa });
   } catch (erro) {
     console.error(erro);
@@ -201,6 +207,13 @@ router.post('/:id/fechar', async (req, res) => {
     );
 
     await client.query('COMMIT');
+
+    await registrarAuditoria(pool, {
+      tabela: 'caixa', operacao: 'UPDATE', registro: Number(id),
+      id_funcionario: req.usuario.id_funcionario,
+      detalhes: `Caixa fechado — esperado: R$ ${valorEsperado.toFixed(2)}, contado: R$ ${Number(valor_contado).toFixed(2)}, diferença: R$ ${diferenca.toFixed(2)}`,
+    });
+
     res.json({ mensagem: 'Caixa fechado com sucesso.', valor_esperado: valorEsperado, diferenca });
   } catch (erro) {
     await client.query('ROLLBACK');

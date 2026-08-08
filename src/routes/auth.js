@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const pool = require('../config/db');
 const authMiddleware = require('../middleware/auth');
+const registrarAuditoria = require('../utils/auditoria');
 
 const MAX_TENTATIVAS = 5;
 
@@ -70,11 +71,27 @@ router.post('/login', async (req, res) => {
       { expiresIn: '14h' }
     );
 
+    await registrarAuditoria(pool, {
+      tabela: 'usuarios', operacao: 'LOGIN', registro: usuario.id_usuario,
+      id_funcionario: usuario.id_funcionario, detalhes: `Login: ${usuario.login}`,
+    });
+
     res.json({ token });
   } catch (erro) {
     console.error(erro);
     res.status(500).json({ erro: 'Erro ao efetuar login.' });
   }
+});
+
+// POST /api/auth/logout -> só registra na auditoria (o token em si "morre"
+// sozinho quando expira, ou quando o navegador fecha, já que fica em
+// sessionStorage — mas registrar o logout explícito é útil pra auditoria).
+router.post('/logout', authMiddleware, async (req, res) => {
+  await registrarAuditoria(pool, {
+    tabela: 'usuarios', operacao: 'LOGOUT', registro: req.usuario.id_usuario,
+    id_funcionario: req.usuario.id_funcionario, detalhes: `Logout: ${req.usuario.login}`,
+  });
+  res.json({ mensagem: 'Logout registrado.' });
 });
 
 // GET /api/auth/status -> dados da conta de acesso do usuário logado

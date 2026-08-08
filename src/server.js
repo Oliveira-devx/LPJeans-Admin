@@ -17,6 +17,7 @@ const vendasRoutes = require('./routes/vendas');
 const formasPagamentoRoutes = require('./routes/formasPagamento');
 const estoqueRoutes = require('./routes/estoque');
 const caixaRoutes = require('./routes/caixa');
+const relatoriosRoutes = require('./routes/relatorios');
 const authMiddleware = require('./middleware/auth');
 const { permitirModulo, permitirCargos } = require('./middleware/permissoes');
 
@@ -44,6 +45,7 @@ app.use('/api/fornecedores', authMiddleware, permitirModulo('fornecedores'), for
 app.use('/api/compras', authMiddleware, permitirModulo('compras'), comprasRoutes);
 app.use('/api/usuarios', authMiddleware, permitirModulo('usuarios'), usuariosRoutes);
 app.use('/api/caixa', authMiddleware, permitirModulo('caixa'), caixaRoutes);
+app.use('/api/relatorios', authMiddleware, permitirModulo('relatorios'), relatoriosRoutes);
 app.use('/api/permissoes', authMiddleware, permissoesRoutes);
 
 const PORT = process.env.PORT || 3000;

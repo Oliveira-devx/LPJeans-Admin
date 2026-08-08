@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sistema LPJeans — Relatórios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .filtro-periodo { display: flex; gap: 8px; margin-bottom: 18px; }
+  .filtro-periodo button {
+    padding: 7px 16px; border-radius: 20px; border: 1px solid var(--borda);
+    background: var(--branco); color: var(--texto-suave); cursor: pointer; font-size: 13px;
+    transition: all 0.15s ease;
+  }
+  .filtro-periodo button.ativo { background: var(--gradiente); color: #fff; border-color: transparent; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div id="sidebar-container"></div>
+  <div class="coluna-principal">
+    <div id="topbar-container"></div>
+    <main class="conteudo">
+
+      <div class="filtro-periodo">
+        <button class="ativo" data-periodo="hoje" onclick="mudarPeriodo('hoje', this)">Hoje</button>
+        <button data-periodo="semana" onclick="mudarPeriodo('semana', this)">Últimos 7 dias</button>
+        <button data-periodo="mes" onclick="mudarPeriodo('mes', this)">Últimos 30 dias</button>
+      </div>
+
+      <div class="grade-indicadores">
+        <div class="indicador"><div class="rotulo">Vendas no período</div><div class="valor" id="indNumeroVendas">—</div></div>
+        <div class="indicador"><div class="rotulo">Faturamento</div><div class="valor" id="indFaturamento">—</div></div>
+        <div class="indicador"><div class="rotulo">Ticket médio</div><div class="valor" id="indTicketMedio">—</div></div>
+        <div class="indicador"><div class="rotulo">Vendido em espécie (dinheiro)</div><div class="valor" id="indDinheiro" style="font-size:20px;">—</div></div>
+        <div class="indicador"><div class="rotulo">Vendido em Pix</div><div class="valor" id="indPix" style="font-size:20px;">—</div></div>
+      </div>
+
+      <div class="card">
+        <h2>Produtos mais vendidos no período</h2>
+        <div class="wrapper-tabela">
+          <table>
+            <thead><tr><th>Produto</th><th>Quantidade</th><th>Valor vendido</th></tr></thead>
+            <tbody id="tabelaTopProdutos"><tr><td colspan="3">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Vendas por forma de pagamento</h2>
+        <div class="wrapper-tabela">
+          <table>
+            <thead><tr><th>Forma</th><th>Total</th></tr></thead>
+            <tbody id="tabelaFormasPagamento"><tr><td colspan="2">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Log de auditoria</h2>
+        <p style="font-size:12.5px; color:var(--texto-suave); margin-top:-8px; margin-bottom:14px;">
+          Registra ações importantes: login/logout, vendas, compras, caixa, ajustes de estoque e mudanças de usuários.
+        </p>
+        <div class="wrapper-tabela">
+          <table>
+            <thead><tr><th>Data/hora</th><th>Ação</th><th>Tabela</th><th>Responsável</th><th>Detalhes</th></tr></thead>
+            <tbody id="tabelaAuditoria"><tr><td colspan="5">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+<script src="js/api.js"></script>
+<script src="js/sidebar.js"></script>
+<script src="js/topbar.js"></script>
+<script src="js/relatorios.js"></script>
+</body>
+</html>

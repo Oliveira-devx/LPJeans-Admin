@@ -58,21 +58,23 @@ async function renderizarVariacoes(idProduto) {
   const variacoes = await apiFetch(`/api/produtos/${idProduto}/variacoes`);
 
   const linhasTabela = variacoes.map(v => `
-    <tr>
-      <td>${v.tamanho}</td>
-      <td>${v.cor}</td>
-      <td>${v.codigo_barras || '—'}</td>
+    <tr id="linha-variacao-${v.id_variacao}" data-tamanho="${v.tamanho}" data-cor="${v.cor}" data-codigo="${v.codigo_barras || ''}" data-minimo="${v.estoque_minimo}">
+      <td class="col-tamanho">${v.tamanho}</td>
+      <td class="col-cor">${v.cor}</td>
+      <td class="col-codigo">${v.codigo_barras || '—'}</td>
+      <td class="col-minimo">${v.estoque_minimo}</td>
       <td>${v.quantidade_atual <= v.estoque_minimo
             ? `<span class="badge-baixo">${v.quantidade_atual}</span>`
             : `<span class="badge-ok">${v.quantidade_atual}</span>`}</td>
+      <td><button class="secundario" onclick="editarVariacao(${v.id_variacao})">Editar</button></td>
     </tr>
-  `).join('') || '<tr><td colspan="4">Nenhuma variação cadastrada ainda.</td></tr>';
+  `).join('') || '<tr><td colspan="6">Nenhuma variação cadastrada ainda.</td></tr>';
 
   celula.innerHTML = `
     <strong>Variações deste produto</strong>
     <table>
-      <thead><tr><th>Tamanho</th><th>Cor</th><th>Código de barras</th><th>Estoque</th></tr></thead>
-      <tbody>${linhasTabela}</tbody>
+      <thead><tr><th>Tamanho</th><th>Cor</th><th>Código de barras</th><th>Mínimo</th><th>Estoque</th><th></th></tr></thead>
+      <tbody id="corpoVariacoes-${idProduto}">${linhasTabela}</tbody>
     </table>
 
     <form id="formVariacao-${idProduto}" style="margin-top:12px;">
@@ -107,6 +109,53 @@ async function renderizarVariacoes(idProduto) {
       msg.className = 'msg erro';
     }
   });
+}
+
+// Troca a linha da variação por campos editáveis, sem precisar sair da tabela.
+function editarVariacao(idVariacao) {
+  const linha = document.getElementById(`linha-variacao-${idVariacao}`);
+  const { tamanho, cor, codigo, minimo } = linha.dataset;
+
+  linha.innerHTML = `
+    <td><input type="text" class="edit-tamanho" value="${tamanho}" style="width:70px;"></td>
+    <td><input type="text" class="edit-cor" value="${cor}" style="width:90px;"></td>
+    <td><input type="text" class="edit-codigo" value="${codigo}" style="width:120px;"></td>
+    <td><input type="number" class="edit-minimo" value="${minimo}" min="0" style="width:70px;"></td>
+    <td colspan="2" style="display:flex; gap:8px;">
+      <button class="primario" style="padding:6px 12px; font-size:12.5px;" onclick="salvarEdicaoVariacao(${idVariacao})">Salvar</button>
+      <button class="secundario" onclick="cancelarEdicaoVariacao(${idVariacao})">Cancelar</button>
+    </td>
+  `;
+}
+
+async function salvarEdicaoVariacao(idVariacao) {
+  const linha = document.getElementById(`linha-variacao-${idVariacao}`);
+  const containerDetalhe = linha.closest('[id^="detalhe-"]');
+  const idProdutoDaTela = containerDetalhe ? containerDetalhe.id.replace('detalhe-', '') : null;
+
+  const corpo = {
+    tamanho: linha.querySelector('.edit-tamanho').value,
+    cor: linha.querySelector('.edit-cor').value,
+    codigo_barras: linha.querySelector('.edit-codigo').value || null,
+    estoque_minimo: Number(linha.querySelector('.edit-minimo').value) || 0,
+  };
+
+  try {
+    await apiFetch(`/api/produtos/${idProdutoDaTela}/variacoes/${idVariacao}`, {
+      method: 'PUT',
+      body: JSON.stringify(corpo),
+    });
+    await renderizarVariacoes(idProdutoDaTela);
+  } catch (erro) {
+    alert(erro.message);
+  }
+}
+
+function cancelarEdicaoVariacao(idVariacao) {
+  const linha = document.getElementById(`linha-variacao-${idVariacao}`);
+  const containerDetalhe = linha.closest('[id^="detalhe-"]');
+  const idProdutoDaTela = containerDetalhe ? containerDetalhe.id.replace('detalhe-', '') : null;
+  renderizarVariacoes(idProdutoDaTela);
 }
 
 document.getElementById('formTipo').addEventListener('submit', async (e) => {

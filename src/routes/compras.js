@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
+const registrarAuditoria = require('../utils/auditoria');
 
 // GET /api/compras -> lista compras com nome do fornecedor e do funcionário
 router.get('/', async (req, res) => {
@@ -131,6 +132,11 @@ router.post('/', async (req, res) => {
     }
 
     await client.query('COMMIT');
+
+    await registrarAuditoria(pool, {
+      tabela: 'compras', operacao: 'INSERT', registro: idCompra,
+      id_funcionario: id_funcionario, detalhes: `Compra registrada — valor total: R$ ${valorTotal.toFixed(2)}`,
+    });
 
     res.status(201).json({ id_compra: idCompra, valor_total: valorTotal });
   } catch (erro) {

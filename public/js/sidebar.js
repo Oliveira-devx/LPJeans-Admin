@@ -32,7 +32,7 @@ const ITENS_MENU = [
   { id: 'clientes', label: 'Clientes', href: 'clientes.html', moduloChave: null },
   { id: 'fornecedores', label: 'Fornecedores', href: 'fornecedores.html', moduloChave: 'fornecedores' },
   { id: 'caixa', label: 'Caixa', href: 'caixa.html', moduloChave: 'caixa' },
-  { id: 'relatorios', label: 'Relatórios', href: 'em-construcao.html?modulo=Relatórios', moduloChave: 'relatorios' },
+  { id: 'relatorios', label: 'Relatórios', href: 'relatorios.html', moduloChave: 'relatorios' },
   { id: 'usuarios', label: 'Usuários', href: 'usuarios.html', moduloChave: 'usuarios' },
   { id: 'configuracoes', label: 'Configurações', href: 'configuracoes.html', adminApenas: true },
 ];

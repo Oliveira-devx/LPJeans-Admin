@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
 const { permitirModulo } = require('../middleware/permissoes');
+const registrarAuditoria = require('../utils/auditoria');
 
 const CARGOS_SEMPRE_LIBERADOS = ['Administrador', 'Proprietaria'];
 
@@ -258,6 +259,10 @@ router.put('/:id/cancelar', async (req, res) => {
     if (resultado.rows.length === 0) {
       return res.status(400).json({ erro: 'Só é possível cancelar vendas em aberto.' });
     }
+    await registrarAuditoria(pool, {
+      tabela: 'vendas', operacao: 'UPDATE', registro: Number(id),
+      id_funcionario: req.usuario.id_funcionario, detalhes: 'Venda cancelada',
+    });
     res.json({ mensagem: 'Venda cancelada.' });
   } catch (erro) {
     console.error(erro);
@@ -366,6 +371,13 @@ router.post('/:id/finalizar', async (req, res) => {
     );
 
     await client.query('COMMIT');
+
+    await registrarAuditoria(pool, {
+      tabela: 'vendas', operacao: 'UPDATE', registro: Number(id),
+      id_funcionario: req.usuario.id_funcionario,
+      detalhes: `Venda finalizada — valor final: R$ ${valorFinal.toFixed(2)}`,
+    });
+
     res.json({ mensagem: 'Venda finalizada com sucesso.', valor_final: valorFinal });
   } catch (erro) {
     await client.query('ROLLBACK');

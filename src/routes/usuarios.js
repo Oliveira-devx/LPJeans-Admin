@@ -7,6 +7,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const pool = require('../config/db');
+const registrarAuditoria = require('../utils/auditoria');
 
 // GET /api/usuarios -> lista todos os logins existentes, com nome/cargo do funcionário
 router.get('/', async (req, res) => {
@@ -45,6 +46,12 @@ router.post('/', async (req, res) => {
        RETURNING id_usuario, login`,
       [id_funcionario, login, hash]
     );
+
+    await registrarAuditoria(pool, {
+      tabela: 'usuarios', operacao: 'INSERT', registro: resultado.rows[0].id_usuario,
+      id_funcionario: req.usuario.id_funcionario,
+      detalhes: `Novo login criado: ${login} (para funcionário #${id_funcionario})`,
+    });
 
     res.status(201).json(resultado.rows[0]);
   } catch (erro) {

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
 const { permitirModulo } = require('../middleware/permissoes');
+const registrarAuditoria = require('../utils/auditoria');
 
 // GET /api/estoque?busca=texto -> lista todas as variações com saldo,
 // aberto pra qualquer pessoa logada (vendedora precisa conferir estoque
@@ -99,6 +100,13 @@ router.post('/:idVariacao/ajuste', permitirModulo('estoque'), async (req, res) =
     );
 
     await client.query('COMMIT');
+
+    await registrarAuditoria(pool, {
+      tabela: 'estoque', operacao: 'UPDATE', registro: Number(idVariacao),
+      id_funcionario: req.usuario.id_funcionario,
+      detalhes: `Ajuste manual: ${delta > 0 ? '+' : ''}${delta} — ${observacoes}`,
+    });
+
     res.json({ mensagem: 'Ajuste realizado com sucesso.', novo_saldo: novoSaldo });
   } catch (erro) {
     await client.query('ROLLBACK');
