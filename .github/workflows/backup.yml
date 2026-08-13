@@ -1,0 +1,33 @@
+name: Backup diário do banco (Supabase)
+
+on:
+  schedule:
+    # Roda todo dia às 03:00 UTC (meia-noite no horário de Brasília)
+    - cron: '0 3 * * *'
+  workflow_dispatch: {} # permite rodar manualmente também, pelo GitHub
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Instalar cliente do PostgreSQL
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Gerar o dump do banco
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          pg_dump \
+            --host=${{ secrets.DB_HOST }} \
+            --port=${{ secrets.DB_PORT }} \
+            --username=${{ secrets.DB_USER }} \
+            --dbname=${{ secrets.DB_NAME }} \
+            --no-owner --no-privileges \
+            --file=backup-$(date +%Y-%m-%d).sql
+
+      - name: Salvar o backup como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: backup-lpjeans-${{ github.run_id }}
+          path: backup-*.sql
+          retention-days: 30
