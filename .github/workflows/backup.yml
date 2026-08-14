@@ -1,4 +1,4 @@
-      - name: Testar configuração do banco
+      - name: Testar autenticação PostgreSQL
         env:
           PGHOST: ${{ secrets.DB_HOST }}
           PGPORT: ${{ secrets.DB_PORT }}
@@ -6,16 +6,10 @@
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
           PGDATABASE: ${{ secrets.DB_NAME }}
         run: |
-          echo "PGHOST configurado: ${PGHOST:+SIM}"
-          echo "PGPORT configurado: ${PGPORT:+SIM}"
-          echo "PGUSER configurado: ${PGUSER:+SIM}"
-          echo "PGDATABASE configurado: ${PGDATABASE:+SIM}"
-          echo "PGPASSWORD configurado: ${PGPASSWORD:+SIM}"
+          echo "Host configurado: ${PGHOST:+SIM}"
+          echo "Porta configurada: ${PGPORT:+SIM}"
+          echo "Usuário configurado: ${PGUSER:+SIM}"
+          echo "Banco configurado: ${PGDATABASE:+SIM}"
+          echo "Senha configurada: ${PGPASSWORD:+SIM}"
 
-          test -n "$PGHOST" || { echo "ERRO: DB_HOST vazio"; exit 1; }
-          test -n "$PGPORT" || { echo "ERRO: DB_PORT vazio"; exit 1; }
-          test -n "$PGUSER" || { echo "ERRO: DB_USER vazio"; exit 1; }
-          test -n "$PGPASSWORD" || { echo "ERRO: DB_PASSWORD vazio"; exit 1; }
-          test -n "$PGDATABASE" || { echo "ERRO: DB_NAME vazio"; exit 1; }
-
-          echo "Todos os Secrets foram recebidos."
+          psql -c "SELECT current_user, current_database();"
