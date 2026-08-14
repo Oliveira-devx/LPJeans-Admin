@@ -1,4 +1,29 @@
-      - name: Testar autenticação PostgreSQL
+name: Backup diário do banco (Supabase)
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Instalar cliente PostgreSQL 17
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget ca-certificates
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo wget --quiet -O /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          sudo sh -c 'echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(. /etc/os-release && echo $VERSION_CODENAME)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-17
+
+      - name: Verificar versão do pg_dump
+        run: pg_dump --version
+
+      - name: Gerar o dump do banco
         env:
           PGHOST: ${{ secrets.DB_HOST }}
           PGPORT: ${{ secrets.DB_PORT }}
@@ -6,10 +31,22 @@
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
           PGDATABASE: ${{ secrets.DB_NAME }}
         run: |
-          echo "Host configurado: ${PGHOST:+SIM}"
-          echo "Porta configurada: ${PGPORT:+SIM}"
-          echo "Usuário configurado: ${PGUSER:+SIM}"
-          echo "Banco configurado: ${PGDATABASE:+SIM}"
-          echo "Senha configurada: ${PGPASSWORD:+SIM}"
+          echo "Verificando configuração de conexão..."
 
-          psql -c "SELECT current_user, current_database();"
+          test -n "$PGHOST" || { echo "ERRO: DB_HOST não foi configurado"; exit 1; }
+          test -n "$PGPORT" || { echo "ERRO: DB_PORT não foi configurado"; exit 1; }
+          test -n "$PGUSER" || { echo "ERRO: DB_USER não foi configurado"; exit 1; }
+          test -n "$PGPASSWORD" || { echo "ERRO: DB_PASSWORD não foi configurado"; exit 1; }
+          test -n "$PGDATABASE" || { echo "ERRO: DB_NAME não foi configurado"; exit 1; }
+
+          pg_dump \
+            --no-owner \
+            --no-privileges \
+            --file=backup-$(date +%Y-%m-%d).sql
+
+      - name: Salvar o backup como artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: backup-lpjeans-${{ github.run_id }}
+          path: backup-*.sql
+          retention-days: 30
