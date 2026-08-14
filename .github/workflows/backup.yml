@@ -1,4 +1,4 @@
-      - name: Gerar o dump do banco
+      - name: Testar configuração do banco
         env:
           PGHOST: ${{ secrets.DB_HOST }}
           PGPORT: ${{ secrets.DB_PORT }}
@@ -6,15 +6,16 @@
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
           PGDATABASE: ${{ secrets.DB_NAME }}
         run: |
-          echo "Verificando configuração de conexão..."
+          echo "PGHOST configurado: ${PGHOST:+SIM}"
+          echo "PGPORT configurado: ${PGPORT:+SIM}"
+          echo "PGUSER configurado: ${PGUSER:+SIM}"
+          echo "PGDATABASE configurado: ${PGDATABASE:+SIM}"
+          echo "PGPASSWORD configurado: ${PGPASSWORD:+SIM}"
 
-          test -n "$PGHOST" || { echo "ERRO: DB_HOST não foi configurado"; exit 1; }
-          test -n "$PGPORT" || { echo "ERRO: DB_PORT não foi configurado"; exit 1; }
-          test -n "$PGUSER" || { echo "ERRO: DB_USER não foi configurado"; exit 1; }
-          test -n "$PGPASSWORD" || { echo "ERRO: DB_PASSWORD não foi configurado"; exit 1; }
-          test -n "$PGDATABASE" || { echo "ERRO: DB_NAME não foi configurado"; exit 1; }
+          test -n "$PGHOST" || { echo "ERRO: DB_HOST vazio"; exit 1; }
+          test -n "$PGPORT" || { echo "ERRO: DB_PORT vazio"; exit 1; }
+          test -n "$PGUSER" || { echo "ERRO: DB_USER vazio"; exit 1; }
+          test -n "$PGPASSWORD" || { echo "ERRO: DB_PASSWORD vazio"; exit 1; }
+          test -n "$PGDATABASE" || { echo "ERRO: DB_NAME vazio"; exit 1; }
 
-          pg_dump \
-            --no-owner \
-            --no-privileges \
-            --file=backup-$(date +%Y-%m-%d).sql
+          echo "Todos os Secrets foram recebidos."
