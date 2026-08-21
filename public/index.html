@@ -5,24 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sistema LPJeans — Entrar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div class="tela-login" id="telaLogin">
+
+  <div class="marca-login-flutuante">
+    <div class="texto-marca">LP JEANS</div>
+    <div class="subtexto-marca">Moda Feminina</div>
+  </div>
+
+  <div class="frase-login-flutuante">
+    <h2>Gestão inteligente para sua loja crescer.</h2>
+    <p>Controle vendas, estoque, clientes e operações da LPJeans em um único sistema.</p>
+  </div>
+
   <div class="login-caixa">
     <img src="img/logo.png" alt="LP Jeans" class="logo">
     <h1>Bem-vinda de volta</h1>
     <p class="boas-vindas">Entre com suas credenciais para acessar o sistema.</p>
 
     <form id="formLogin">
-      <div class="campo">
+      <div class="campo campo-icone">
         <label for="login">Usuário</label>
+        <svg class="icone-campo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
         <input type="text" id="login" autocomplete="username" required>
       </div>
 
-      <div class="campo campo-senha">
+      <div class="campo campo-senha campo-icone">
         <label for="senha">Senha</label>
+        <svg class="icone-campo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="4" y="10" width="16" height="10" rx="2"/>
+          <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+        </svg>
         <input type="password" id="senha" autocomplete="current-password" required>
         <button type="button" id="btnMostrarSenha" aria-label="Mostrar senha">
           <svg id="iconeOlhoAberto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
@@ -43,8 +62,16 @@
     </form>
 
     <div id="msg" class="msg"></div>
-    <p class="login-rodape">Sistema LPJeans</p>
+
+    <div class="login-divisor"></div>
+
+    <p class="login-rodape">
+      <strong>Sistema LPJeans</strong>
+      <span class="versao">Versão 2.0.0</span>
+      <span class="marca-sistema">System by PH</span>
+    </p>
   </div>
+
 </div>
 
 <script src="js/api.js"></script>
