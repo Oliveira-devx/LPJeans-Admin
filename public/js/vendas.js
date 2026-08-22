@@ -106,10 +106,10 @@ async function cancelarVendaAtual() {
   if (!confirm('Cancelar esta venda? Os itens serão perdidos (o estoque não foi alterado ainda).')) return;
   try {
     await apiFetch(`/api/vendas/${idVendaAtual}/cancelar`, { method: 'PUT' });
-    voltarParaInicio();
   } catch (erro) {
-    alert(erro.message);
+    alert(erro.message + '\n\nVoltando para o início mesmo assim.');
   }
+  voltarParaInicio();
 }
 
 // ===== Busca de produtos =====
@@ -173,34 +173,45 @@ async function carregarCarrinho() {
 }
 
 function renderizarCarrinho() {
-  const tbody = document.getElementById('tabelaCarrinho');
+  const container = document.getElementById('tabelaCarrinho');
 
   if (carrinhoAtual.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7">Carrinho vazio — busque um produto acima.</td></tr>';
-  } else {
-    tbody.innerHTML = carrinhoAtual.map(item => `
-      <tr>
-        <td>${item.produto}</td>
-        <td>${item.tamanho}</td>
-        <td>${item.cor}</td>
-        <td>
-          <div class="carrinho-qtd">
-            <button onclick="alterarQuantidade(${item.id_item_venda}, -1)">−</button>
-            <input type="text" value="${item.quantidade}" readonly>
-            <button onclick="alterarQuantidade(${item.id_item_venda}, 1)">+</button>
-          </div>
-        </td>
-        <td>
-          ${podeDarDesconto
-            ? `<input type="number" min="0" step="0.01" value="${item.preco_vendido}" style="width:80px;"
-                 onchange="alterarPreco(${item.id_item_venda}, this.value)">`
-            : formatarMoeda(item.preco_vendido)}
-        </td>
-        <td>${formatarMoeda(item.subtotal)}</td>
-        <td><button class="secundario" onclick="removerItem(${item.id_item_venda})">Remover</button></td>
-      </tr>
-    `).join('');
+    container.innerHTML = '<p class="carrinho-vazio">Carrinho vazio — busque um produto acima.</p>';
+    atualizarResumo();
+    return;
   }
+
+  container.innerHTML = carrinhoAtual.map(item => `
+    <div class="item-carrinho">
+      <div class="item-carrinho-info">
+        <span class="item-carrinho-produto">${item.produto}</span>
+        <span class="item-carrinho-variacao">${item.tamanho} · ${item.cor}</span>
+      </div>
+
+      <div class="item-carrinho-controles">
+        <div class="carrinho-qtd">
+          <button onclick="alterarQuantidade(${item.id_item_venda}, -1)" aria-label="Diminuir quantidade">−</button>
+          <input type="text" value="${item.quantidade}" readonly>
+          <button onclick="alterarQuantidade(${item.id_item_venda}, 1)" aria-label="Aumentar quantidade">+</button>
+        </div>
+
+        <div class="item-carrinho-preco">
+          <label>Preço unit.</label>
+          <input type="number" min="0" step="0.01" value="${item.preco_vendido}"
+                 onchange="alterarPreco(${item.id_item_venda}, this.value)">
+        </div>
+      </div>
+
+      <div class="item-carrinho-rodape">
+        <span class="item-carrinho-subtotal">${formatarMoeda(item.subtotal)}</span>
+        <button class="botao-remover-item" onclick="removerItem(${item.id_item_venda})" aria-label="Remover item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  `).join('');
 
   atualizarResumo();
 }
@@ -333,7 +344,6 @@ document.getElementById('btnConfirmarPagamento').addEventListener('click', async
   const msg = document.getElementById('msgFinalizacao');
   msg.className = 'msg';
 
-  const linhas = document.querySelectorAll('#linhasPagamento .linha-pagamento, #linhasPagamento > div');
   const pagamentos = Array.from(document.querySelectorAll('#linhasPagamento > div')).map(div => ({
     id_forma_pagamento: Number(div.querySelector('.select-forma').value),
     valor: Number(div.querySelector('.input-valor').value),
