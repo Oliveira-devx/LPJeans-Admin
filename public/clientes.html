@@ -7,6 +7,32 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<style>
+  .lista-clientes {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px; margin-top: 4px;
+  }
+  .cliente-vazio { text-align: center; padding: 30px 10px; color: var(--texto-suave); font-size: 13.5px; grid-column: 1 / -1; }
+
+  .cartao-cliente {
+    border: 1px solid var(--borda); border-radius: 12px; padding: 14px 16px;
+    background: var(--branco); animation: entrarLinha 0.2s ease-out both;
+  }
+  .cartao-cliente-nome { font-size: 14.5px; font-weight: 600; color: var(--texto); margin-bottom: 6px; }
+  .cartao-cliente-linha {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--texto-suave); margin-bottom: 3px;
+  }
+  .cartao-cliente-linha svg { width: 13px; height: 13px; flex-shrink: 0; opacity: 0.7; }
+  .cartao-cliente-rodape {
+    display: flex; justify-content: flex-end; margin-top: 10px;
+    padding-top: 10px; border-top: 1px solid var(--borda);
+  }
+
+  @media (max-width: 640px) {
+    .lista-clientes { grid-template-columns: 1fr; }
+  }
+</style>
 </head>
 <body>
 <div class="app">
@@ -37,11 +63,8 @@
             <input type="text" id="busca" placeholder="Digite para buscar...">
           </div>
         </form>
-        <div class="wrapper-tabela">
-          <table>
-            <thead><tr><th>Nome</th><th>CPF</th><th>Telefone</th><th>Cidade</th><th></th></tr></thead>
-            <tbody id="tabelaClientes"><tr><td colspan="5">Carregando...</td></tr></tbody>
-          </table>
+        <div id="tabelaClientes" class="lista-clientes">
+          <div class="cliente-vazio">Carregando...</div>
         </div>
       </div>
     </main>

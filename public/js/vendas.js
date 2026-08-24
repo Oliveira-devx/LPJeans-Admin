@@ -219,7 +219,7 @@ function renderizarCarrinho() {
 async function alterarQuantidade(idItem, delta) {
   const item = carrinhoAtual.find(i => i.id_item_venda === idItem);
   if (!item) return;
-  const novaQuantidade = item.quantidade + delta;
+  const novaQuantidade = Number(item.quantidade) + delta;
   if (novaQuantidade <= 0) {
     return removerItem(idItem);
   }

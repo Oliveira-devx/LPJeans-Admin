@@ -1,4 +1,3 @@
-/* ===== Tokens — paleta azul/roxo (estilo SaaS) ===== */
 :root {
   --primario: #4F46E5;
   --primario-escuro: #3730A3;
@@ -21,7 +20,6 @@
   --fonte-titulo: 'Fraunces', Georgia, serif;
   --fonte-corpo: 'Inter', -apple-system, "Segoe UI", sans-serif;
 }
-
 * { box-sizing: border-box; }
 
 body {
@@ -51,7 +49,7 @@ h1, .marca { font-family: var(--fonte-titulo); }
   width: 224px;
   flex-shrink: 0;
   background: var(--primario-mais-escuro);
-  color: #C7C9F5;
+   color: #E3C4C9;
   display: flex;
   flex-direction: column;
 }
@@ -72,21 +70,22 @@ h1, .marca { font-family: var(--fonte-titulo); }
   flex-shrink: 0;
 }
 .sidebar-topo .marca-nome { font-size: 15.5px; color: #fff; letter-spacing: 0.2px; margin: 0; line-height: 1.2; font-family: var(--fonte-corpo); font-weight: 600; }
-.sidebar-topo .marca-sub { font-size: 10px; color: #8B8FD9; margin-top: 1px; }
+.sidebar-topo .marca-sub { font-size: 10px; color: #C99AA1; margin-top: 1px; }
 
-nav.menu { padding: 12px 10px; flex: 1; overflow-y: auto; }
 nav.menu a {
   display: flex; align-items: center; gap: 11px;
-  padding: 9px 12px; border-radius: 8px; color: #ADB0E8;
+  padding: 9px 12px; border-radius: 8px; color: #D9AEB4;
   text-decoration: none; font-size: 13.5px; margin-bottom: 1px;
   transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+nav.menu a:hover { background: rgba(201, 139, 149, 0.18); color: #fff; transform: translateX(2px); }
 }
 nav.menu a:hover { background: rgba(139, 92, 246, 0.16); color: #fff; transform: translateX(2px); }
 nav.menu a.ativo { background: var(--primario); color: #fff; font-weight: 600; box-shadow: inset 2px 0 0 var(--acento); }
 nav.menu a svg { width: 17px; height: 17px; flex-shrink: 0; opacity: 0.85; transition: opacity 0.15s ease; }
 nav.menu a.ativo svg, nav.menu a:hover svg { opacity: 1; }
 
-.sidebar-rodape { padding: 12px 14px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 11px; color: #7477B8; }
+.sidebar-rodape { padding: 12px 14px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 11px; color: #A97B82; }
 
 @media (max-width: 780px) {
   .app { flex-direction: column; }
@@ -346,8 +345,8 @@ tr.variacoes-linha:hover { background: var(--creme); }
   border: 1px solid rgba(255,255,255,0.3);
   color: #fff;
 }
-.campo-icone input::placeholder { color: rgba(255,255,255,0.5); }
-.campo label { color: rgba(255,255,255,0.85); }
+.tela-login .campo-icone input::placeholder { color: rgba(255,255,255,0.5); }
+.tela-login .campo label { color: rgba(255,255,255,0.85); }
 
 .login-caixa button.primario {
   padding: 13px; font-size: 14.5px; margin-top: 4px; border-radius: 13px;
