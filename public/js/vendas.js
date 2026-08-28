@@ -217,7 +217,7 @@ function renderizarCarrinho() {
 }
 
 async function alterarQuantidade(idItem, delta) {
-  const item = carrinhoAtual.find(i => i.id_item_venda === idItem);
+  const item = carrinhoAtual.find(i => Number(i.id_item_venda) === Number(idItem));
   if (!item) return;
   const novaQuantidade = Number(item.quantidade) + delta;
   if (novaQuantidade <= 0) {
@@ -235,7 +235,7 @@ async function alterarQuantidade(idItem, delta) {
 }
 
 async function alterarPreco(idItem, novoPreco) {
-  const item = carrinhoAtual.find(i => i.id_item_venda === idItem);
+  const item = carrinhoAtual.find(i => Number(i.id_item_venda) === Number(idItem));
   if (!item) return;
   try {
     await apiFetch(`/api/vendas/${idVendaAtual}/itens/${idItem}`, {
